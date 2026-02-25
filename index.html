@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Health is Wealth: Medical Vault</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-green: #27ae60;
+            --primary-blue: #2980b9;
+            --accent-orange: #f39c12;
+            --danger-red: #e74c3c;
+            --bg-light: #f8fafc;
+            --text-main: #2c3e50;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* --- Professional Header & Enlarged Logo --- */
+        .app-header {
+            width: 100%;
+            background: white;
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+        }
+
+        .app-logo {
+            width: 220px; /* Increased size for clarity */
+            height: auto;
+            border-radius: 24px;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+            margin-bottom: 12px;
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-green);
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .app-header p {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        /* --- Layout Containers --- */
+        .container { width: 92%; max-width: 460px; padding-bottom: 50px; }
+
+        .tabs { display: flex; background: #e2e8f0; padding: 4px; border-radius: 14px; margin-bottom: 25px; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-weight: 700; cursor: pointer; color: #64748b; border-radius: 10px; transition: 0.2s; }
+        .tab-btn.active { background: white; color: var(--primary-green); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+
+        label { display: block; font-weight: 700; font-size: 11px; margin-bottom: 6px; color: var(--primary-blue); text-transform: uppercase; margin-left: 4px; }
+
+        .input-row { display: flex; gap: 8px; margin-bottom: 16px; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1.5px solid #f1f5f9; border-radius: 16px; font-size: 16px; background: #f1f5f9; box-sizing: border-box; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary-blue); background: white; }
+
+        .mic-btn { background: #eff6ff; border: none; border-radius: 14px; cursor: pointer; padding: 0 12px; font-size: 20px; min-width: 52px; color: var(--primary-blue); }
+
+        .reminder-box { display: flex; align-items: center; justify-content: space-between; background: #fff8eb; padding: 14px; border-radius: 16px; margin-bottom: 16px; border: 1px solid #ffe4b3; }
+
+        /* --- Rearranged Action Buttons --- */
+        .action-group { display: flex; flex-direction: column; gap: 12px; }
+        .save-btn-full { width: 100%; background: var(--primary-green); color: white; border: none; padding: 18px; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; transition: transform 0.1s; }
+        .save-btn-full:active { transform: scale(0.98); }
+
+        .bottom-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-secondary { border: none; padding: 14px; border-radius: 16px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .clear-btn { background: #f1f5f9; color: #64748b; }
+        .share-btn { background: var(--primary-blue); color: white; }
+
+        .export-link { display: block; text-align: center; margin-top: 15px; color: #6c5ce7; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; }
+
+        /* --- History List --- */
+        .visit-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border-left: 6px solid var(--accent-orange); position: relative; }
+        .history-meta { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .tag { font-size: 10px; background: #eff6ff; color: #3b82f6; padding: 4px 10px; border-radius: 20px; font-weight: 800; text-transform: uppercase; }
+        .card-controls { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; border-top: 1px solid #f8fafc; padding-top: 10px; }
+        .control-btn { border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; cursor: pointer; font-weight: 700; }
+        .edit-btn { background: #eff6ff; color: var(--primary-blue); }
+        .del-btn { background: #fff1f2; color: var(--danger-red); }
+
+        .search-box { width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #e2e8f0; margin: 15px 0; font-size: 15px; background: white; box-sizing: border-box; }
+        .report-item { background: #f8fafc; padding: 12px; border-radius: 16px; margin-bottom: 10px; border: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        #captureArea { position: absolute; left: -9999px; width: 400px; }
+    </style>
+</head>
+<body>
+
+<div class="app-header">
+    <img src="image_589dda.png" alt="Health is Wealth" class="app-logo">
+    <h1>Health is Wealth</h1>
+    <p>Secure Medical Vault</p>
+</div>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('visitTab')">Visit Entry</button>
+        <button class="tab-btn" onclick="switchTab('reportTab')">Reports Tab</button>
+    </div>
+
+    <div id="visitTab" class="section active">
+        <div class="card" id="mainForm">
+            <input type="hidden" id="editIndex" value="-1">
+            
+            <label>Visit Date</label>
+            <input type="date" id="visitDate" style="margin-bottom:16px;">
+
+            <label>Doctor's Name</label>
+            <div class="input-row">
+                <input type="text" id="drName" placeholder="Name of Doctor">
+                <button class="mic-btn" onclick="runSpeech('drName')">🎤</button>
+            </div>
+
+            <label>Category</label>
+            <select id="categorySelect" onchange="handleCategoryChange()" style="margin-bottom:16px;"></select>
+            <div class="input-row" id="rowOtherCat" style="display:none;">
+                <input type="text" id="otherCategoryInput" placeholder="Enter Category">
+                <button class="mic-btn" onclick="runSpeech('otherCategoryInput')">🎤</button>
+            </div>
+
+            <label>Illness / Health Issue</label>
+            <select id="illnessSelect" onchange="handleIllnessChange()" style="margin-bottom:16px;"></select>
+            <div class="input-row" id="rowOtherIll" style="display:none;">
+                <input type="text" id="otherIllnessInput" placeholder="Describe Issue">
+                <button class="mic-btn" onclick="runSpeech('otherIllnessInput')">🎤</button>
+            </div>
+
+            <label>Medication Prescribed</label>
+            <div class="input-row">
+                <input type="text" id="medicine" placeholder="e.g. Paracetamol 500mg">
+                <button class="mic-btn" onclick="runSpeech('medicine')">🎤</button>
+            </div>
+
+            <div class="reminder-box">
+                <span style="font-size: 13px; font-weight: 800; color: #d97706;">🔔 Set Dose Reminder?</span>
+                <input type="time" id="reminderTime" style="width: auto; padding: 6px; background: white; border: 1px solid #fcd34d; border-radius: 8px;">
+            </div>
+
+            <label>Advice & Notes</label>
+            <div class="input-row">
+                <textarea id="notes" rows="2" placeholder="Doctor's instructions..."></textarea>
+                <button class="mic-btn" onclick="runSpeech('notes')">🎤</button>
+            </div>
+
+            <div class="action-group">
+                <button class="save-btn-full" id="btnMain" onclick="saveData()">Save to Vault ✅</button>
+                <div class="bottom-btns">
+                    <button class="btn-secondary clear-btn" onclick="clearForm()">Clear 🗑️</button>
+                    <button class="btn-secondary share-btn" onclick="fetchAndShare()">Share Card 📤</button>
+                </div>
+            </div>
+            <span class="export-link" onclick="exportToExcel()">📊 Export Full History to Excel</span>
+        </div>
+    </div>
+
+    <div id="reportTab" class="section">
+        <div class="card">
+            <h3>Document Vault</h3>
+            <label>Blood Reports</label>
+            <input type="file" id="bloodFile" accept="image/*,.pdf" style="margin-bottom:15px;">
+            <label>Insurance Docs</label>
+            <input type="file" id="insuranceFile" accept="image/*,.pdf" style="margin-bottom:15px;">
+            <label>Other Reports</label>
+            <input type="file" id="otherReportsFile" accept="image/*,.pdf" style="margin-bottom:20px;">
+            <button class="save-btn-full" onclick="saveFiles()">Upload Documents 📁</button>
+        </div>
+
+        <div id="fileHistory" class="card">
+            <h3>Stored Records</h3>
+            <div id="reportList"></div>
+        </div>
+    </div>
+
+    <h3 style="padding-left:10px; margin-bottom: 5px;">Visit History</h3>
+    <input type="text" id="searchBar" class="search-box" placeholder="🔍 Search records..." onkeyup="filterHistory()">
+    
+    <div id="visitHistory"></div>
+</div>
+
+<div id="captureArea"></div>
+
+<script>
+    // Logic remains identical to your working version to ensure "nothing is deleted"
+    const medicalData = {
+        "General / Infection": ["Fever", "Viral Fever", "Bacterial Infection", "Cold", "Cough", "Sore Throat", "Flu", "Body Ache"],
+        "Pain & Injury": ["Headache", "Migraine", "Back Pain", "Neck Pain", "Knee Pain", "Muscle Pain", "Injury / Trauma"],
+        "Heart / BP": ["High BP", "Low BP", "Chest Pain", "Palpitations"],
+        "Digestive System": ["Stomach Pain", "Acidity", "Indigestion", "Gas", "Diarrhea", "Vomiting"],
+        "Diabetes / Metabolic": ["Diabetes Check", "High Sugar", "Low Sugar", "Thyroid Disorder"],
+        "Respiratory": ["Asthma", "Breathing Difficulty", "Bronchitis"],
+        "Neurological": ["Anxiety", "Stress", "Depression", "Dizziness", "Vertigo"],
+        "Bone / Ortho": ["Arthritis", "Osteoporosis", "Fracture", "Slip Disc"],
+        "Skin / Hair": ["Skin Allergy", "Rashes", "Itching", "Acne", "Hair Fall"],
+        "Eye / ENT": ["Eye Infection", "Eye Pain", "Ear Pain", "Hearing Issue", "Sinusitis"],
+        "Urinary / Kidney": ["UTI", "Burning Urination", "Kidney Stone"],
+        "Men / Women": ["Menstrual Pain", "Irregular Periods", "Pregnancy Check-up"],
+        "Routine": ["General Check-up", "Blood Test Review", "Vaccination"],
+        "Other": ["Other"]
+    };
+
+    window.onload = () => {
+        document.getElementById('visitDate').valueAsDate = new Date();
+        const catSelect = document.getElementById('categorySelect');
+        catSelect.add(new Option("-- Select Category --", ""));
+        Object.keys(medicalData).forEach(cat => catSelect.add(new Option(cat, cat)));
+        fetchHistory();
+        renderReportList();
+    };
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function handleCategoryChange() {
+        const val = document.getElementById('categorySelect').value;
+        document.getElementById('rowOtherCat').style.display = (val === "Other") ? "flex" : "none";
+        updateIllnessDropdown();
+    }
+
+    function handleIllnessChange() {
+        const val = document.getElementById('illnessSelect').value;
+        document.getElementById('rowOtherIll').style.display = (val === "Other") ? "flex" : "none";
+    }
+
+    function updateIllnessDropdown() {
+        const cat = document.getElementById('categorySelect').value;
+        const illSelect = document.getElementById('illnessSelect');
+        illSelect.innerHTML = '<option value="">-- Select Illness --</option>';
+        if (cat && medicalData[cat]) {
+            medicalData[cat].forEach(ill => illSelect.add(new Option(ill, ill)));
+            if (cat !== "Other") illSelect.add(new Option("Other", "Other"));
+        }
+    }
+
+    function runSpeech(id) {
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+        if (!SpeechRecognition) return alert("Speech recognition not supported");
+        const recognition = new SpeechRecognition();
+        recognition.onresult = (e) => { document.getElementById(id).value = e.results[0][0].transcript; };
+        recognition.start();
+    }
+
+    function saveData() {
+        const vDate = document.getElementById('visitDate').value;
+        const dr = document.getElementById('drName').value;
+        let cat = document.getElementById('categorySelect').value;
+        let originalCat = cat;
+        if(cat === "Other") cat = document.getElementById('otherCategoryInput').value;
+        let ill = document.getElementById('illnessSelect').value;
+        let originalIll = ill;
+        if(ill === "Other") ill = document.getElementById('otherIllnessInput').value;
+        const med = document.getElementById('medicine').value;
+        const note = document.getElementById('notes').value;
+        const remTime = document.getElementById('reminderTime').value;
+        const editIdx = parseInt(document.getElementById('editIndex').value);
+
+        if (!ill || !med) return alert("Please fill Illness and Medication.");
+
+        const visit = { 
+            date: vDate, doctor: dr, category: cat, illness: ill, medicine: med, notes: note,
+            metaCat: originalCat, metaIll: originalIll, reminder: remTime
+        };
+
+        let visits = JSON.parse(localStorage.getItem('myVisits')) || [];
+        if (editIdx > -1) visits[editIdx] = visit;
+        else visits.push(visit);
+        
+        localStorage.setItem('myVisits', JSON.stringify(visits));
+        clearForm();
+        fetchHistory();
+    }
+
+    async function fetchAndShare() {
+        const visits = JSON.parse(localStorage.getItem('myVisits')) || [];
+        if (visits.length === 0) return alert("No history to share.");
+        const v = visits[visits.length - 1]; 
+
+        const captureArea = document.getElementById('captureArea');
+        captureArea.innerHTML = `<div class="visit-card" id="temp-card" style="border-left: 10px solid #27ae60; width: 350px;">
+            <div class="history-meta"><span style="font-weight:bold;">${v.date}</span><span class="tag">${v.category}</span></div>
+            <h2 style="margin:10px 0; color:#2c3e50;">${v.illness}</h2>
+            <p><strong>Dr:</strong> ${v.doctor}</p>
+            <p style="color:#27ae60;"><strong>Meds:</strong> ${v.medicine}</p>
+            ${v.reminder ? `<p style="color:#e67e22;"><strong>🔔 Reminder:</strong> ${v.reminder}</p>` : ''}
+            <p style="font-size:12px; color:#64748b; border-top:1px solid #eee; margin-top:10px; padding-top:10px;"><em>Notes: ${v.notes}</em></p>
+        </div>`;
+
+        try {
+            const canvas = await html2canvas(document.querySelector("#temp-card"), { scale: 2 });
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+            const file = new File([blob], `HealthReport_${v.date}.jpg`, { type: 'image/jpeg' });
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: 'Medical Visit Report' });
+            } else {
+                const link = document.createElement('a');
+                link.download = `HealthReport_${v.date}.jpg`;
+                link.href = canvas.toDataURL("image/jpeg");
+                link.click();
+            }
+        } catch (err) { alert("Sharing failed."); }
+    }
+
+    function saveFiles() {
+        const blood = document.getElementById('bloodFile').files[0];
+        const insurance = document.getElementById('insuranceFile').files[0];
+        const other = document.getElementById('otherReportsFile').files[0];
+        if (!blood && !insurance && !other) return alert("Select a file.");
+        let reports = JSON.parse(localStorage.getItem('myDocs')) || [];
+        const addReport = (file, type) => { if (file) reports.push({ type, name: file.name, date: new Date().toLocaleDateString() }); };
+        addReport(blood, "Blood Report");
+        addReport(insurance, "Insurance");
+        addReport(other, "Other Report");
+        localStorage.setItem('myDocs', JSON.stringify(reports));
+        renderReportList();
+        alert("Documents saved.");
+    }
+
+    function renderReportList() {
+        const docs = JSON.parse(localStorage.getItem('myDocs')) || [];
+        document.getElementById('reportList').innerHTML = docs.map((d, i) => `
+            <div class="report-item">
+                <div><strong>${d.type}</strong><br><small>${d.name}</small></div>
+                <button class="control-btn del-btn" onclick="deleteDoc(${i})">🗑️</button>
+            </div>`).join('');
+    }
+
+    function deleteDoc(i) {
+        let docs = JSON.parse(localStorage.getItem('myDocs'));
+        docs.splice(i, 1);
+        localStorage.setItem('myDocs', JSON.stringify(docs));
+        renderReportList();
+    }
+
+    function exportToExcel() {
+        const data = JSON.parse(localStorage.getItem('myVisits')) || [];
+        let csv = "Date,Category,Illness,Doctor,Medicine,Notes,Reminder\n";
+        data.forEach(v => {
+            csv += `"${v.date}","${v.category}","${v.illness}","${v.doctor}","${v.medicine}","${v.notes}","${v.reminder}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `HealthVault_History.csv`;
+        link.click();
+    }
+
+    function fetchHistory() {
+        const data = JSON.parse(localStorage.getItem('myVisits')) || [];
+        document.getElementById('visitHistory').innerHTML = data.map((v, index) => `
+            <div class="visit-card">
+                <div class="history-meta"><span style="font-weight:bold;">${v.date}</span><span class="tag">${v.category}</span></div>
+                <h4 style="margin:5px 0;">${v.illness}</h4>
+                <p style="margin:0; font-size:13px; color:#64748b;"><strong>Dr:</strong> ${v.doctor}</p>
+                <div class="card-controls">
+                    <button class="control-btn edit-btn" onclick="editVisit(${index})">Edit ✏️</button>
+                    <button class="control-btn del-btn" onclick="deleteVisit(${index})">Delete 🗑️</button>
+                </div>
+            </div>`).reverse().join('');
+    }
+
+    function editVisit(index) {
+        const v = JSON.parse(localStorage.getItem('myVisits'))[index];
+        document.getElementById('editIndex').value = index;
+        document.getElementById('visitDate').value = v.date;
+        document.getElementById('drName').value = v.doctor;
+        document.getElementById('categorySelect').value = v.metaCat;
+        handleCategoryChange();
+        setTimeout(() => {
+            document.getElementById('illnessSelect').value = v.metaIll;
+            handleIllnessChange();
+            if(v.metaIll === "Other") document.getElementById('otherIllnessInput').value = v.illness;
+            document.getElementById('medicine').value = v.medicine;
+            document.getElementById('notes').value = v.notes;
+            document.getElementById('reminderTime').value = v.reminder || "";
+            document.getElementById('btnMain').innerText = "Update Vault Record ✅";
+            switchTab('visitTab');
+            window.scrollTo(0, 0);
+        }, 100);
+    }
+
+    function deleteVisit(index) {
+        if(confirm("Delete record?")) {
+            let v = JSON.parse(localStorage.getItem('myVisits'));
+            v.splice(index, 1);
+            localStorage.setItem('myVisits', JSON.stringify(v));
+            fetchHistory();
+        }
+    }
+
+    function clearForm() {
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('drName').value = "";
+        document.getElementById('categorySelect').value = "";
+        document.getElementById('illnessSelect').innerHTML = "";
+        document.getElementById('medicine').value = "";
+        document.getElementById('notes').value = "";
+        document.getElementById('reminderTime').value = "";
+        document.getElementById('btnMain').innerText = "Save to Vault ✅";
+    }
+
+    function filterHistory() {
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        Array.from(document.getElementsByClassName('visit-card')).forEach(card => {
+            card.style.display = card.innerText.toLowerCase().includes(q) ? "block" : "none";
+        });
+    }
+</script>
+</body>
+</html>
