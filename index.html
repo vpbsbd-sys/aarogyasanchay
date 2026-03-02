@@ -409,18 +409,53 @@
                     const file = fileInput.files[0];
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        // Crucial: Always get the LATEST state of localStorage before pushing
-                        let reports = JSON.parse(localStorage.getItem('myDocs')) || [];
-                        reports.push({ 
-                            id: Date.now() + "_" + Math.random(),
-                            type: type, 
-                            name: file.name, 
-                            date: new Date().toLocaleDateString(),
-                            data: e.target.result 
-                        });
-                        localStorage.setItem('myDocs', JSON.stringify(reports));
-                        fileInput.value = ""; // Clear input after success
-                        resolve();
+                        const img = new Image();
+                        img.src = e.target.result;
+                        img.onload = () => {
+                            // Create a canvas to resize/compress the image
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+
+                            // Max dimension 1200px to save space
+                            const max_size = 1200;
+                            if (width > height) {
+                                if (width > max_size) {
+                                    height *= max_size / width;
+                                    width = max_size;
+                                }
+                            } else {
+                                if (height > max_size) {
+                                    width *= max_size / height;
+                                    height = max_size;
+                                }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            // Compress to 60% quality JPEG (drastically smaller size)
+                            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+
+                            let reports = JSON.parse(localStorage.getItem('myDocs')) || [];
+                            reports.push({ 
+                                id: Date.now() + "_" + Math.random(),
+                                type: type, 
+                                name: file.name, 
+                                date: new Date().toLocaleDateString(),
+                                data: compressedDataUrl 
+                            });
+                            
+                            try {
+                                localStorage.setItem('myDocs', JSON.stringify(reports));
+                                fileInput.value = ""; 
+                                resolve();
+                            } catch (error) {
+                                alert("Vault is full! Please delete old reports to add new ones.");
+                                resolve();
+                            }
+                        };
                     };
                     reader.readAsDataURL(file);
                 } else {
@@ -428,7 +463,6 @@
                 }
             });
         };
-
         // Process all uploads and then refresh the UI
         Promise.all([
             processFile(blood, "Blood Report"),
