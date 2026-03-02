@@ -57,7 +57,6 @@
             border-radius: 12px; font-size: 14px; background: #f8fafc; box-sizing: border-box;
         }
 
-        /* Medication Specific UI */
         .med-entry { 
             background: #f1f5f9; 
             padding: 10px; 
@@ -141,7 +140,6 @@
     <div id="visitTab" class="section active">
         <div class="card" id="mainForm">
             <input type="hidden" id="editIndex" value="-1">
-            
             <label>Visit Date</label>
             <input type="date" id="visitDate" style="margin-bottom:12px;">
 
@@ -166,8 +164,7 @@
             </div>
 
             <label>Medication List</label>
-            <div id="medicationContainer">
-                </div>
+            <div id="medicationContainer"></div>
             <button class="add-med-btn" onclick="addMedicationRow()">+ Add Medication</button>
 
             <label>Notes</label>
@@ -188,16 +185,12 @@
     <div id="reportTab" class="section">
         <div class="card">
             <h3>Upload Documents</h3>
-            
             <label>Blood Reports</label>
-            <input type="file" id="bloodFile" accept="image/*,.pdf" style="margin-bottom:15px;">
-            
+            <input type="file" id="bloodFile" accept="image/*" style="margin-bottom:15px;">
             <label>Insurance Documents</label>
-            <input type="file" id="insuranceFile" accept="image/*,.pdf" style="margin-bottom:15px;">
-            
+            <input type="file" id="insuranceFile" accept="image/*" style="margin-bottom:15px;">
             <label>Other Reports / Prescription</label>
-            <input type="file" id="otherReportsFile" accept="image/*,.pdf" style="margin-bottom:15px;">
-            
+            <input type="file" id="otherReportsFile" accept="image/*" style="margin-bottom:15px;">
             <button class="action save-btn" style="width:100%" onclick="saveFiles()">Upload to Vault 📁</button>
         </div>
 
@@ -209,7 +202,6 @@
 
     <h3 style="padding-left:10px;">Visit History</h3>
     <input type="text" id="searchBar" class="search-box" placeholder="🔍 Search History..." onkeyup="filterHistory()">
-    
     <div id="visitHistory"></div>
 </div>
 
@@ -238,7 +230,7 @@
         const catSelect = document.getElementById('categorySelect');
         catSelect.add(new Option("-- Select Category --", ""));
         Object.keys(medicalData).forEach(cat => catSelect.add(new Option(cat, cat)));
-        addMedicationRow(); // Add one row by default
+        addMedicationRow();
         fetchHistory();
         renderReportList();
     };
@@ -307,16 +299,12 @@
         let cat = document.getElementById('categorySelect').value;
         let originalCat = cat;
         if(cat === "Other") cat = document.getElementById('otherCategoryInput').value;
-        
         let ill = document.getElementById('illnessSelect').value;
         let originalIll = ill;
         if(ill === "Other") ill = document.getElementById('otherIllnessInput').value;
-        
-        // Handle Multi-Medications
         const medRows = document.querySelectorAll('.med-entry');
         let medsArray = [];
         let summaryString = "";
-
         medRows.forEach(row => {
             const name = row.querySelector('.med-name').value;
             const dose = row.querySelector('.med-dose').value;
@@ -327,24 +315,19 @@
                 summaryString += `${name} (${dose}${unit}) [${freq}], `;
             }
         });
-
         const note = document.getElementById('notes').value;
         const editIdx = parseInt(document.getElementById('editIndex').value);
-
         if (!ill || medsArray.length === 0) return alert("Please fill at least Illness and one Medication.");
-
         const visit = { 
             date: vDate, doctor: dr, category: cat, illness: ill, 
-            medicine: summaryString.replace(/, $/, ""), // string for history view
-            medDetails: medsArray, // raw data for editing
+            medicine: summaryString.replace(/, $/, ""), 
+            medDetails: medsArray, 
             notes: note,
             metaCat: originalCat, metaIll: originalIll
         };
-
         let visits = JSON.parse(localStorage.getItem('myVisits')) || [];
         if (editIdx > -1) visits[editIdx] = visit;
         else visits.push(visit);
-        
         localStorage.setItem('myVisits', JSON.stringify(visits));
         clearForm();
         fetchHistory();
@@ -353,35 +336,16 @@
     async function fetchAndShare() {
         const visits = JSON.parse(localStorage.getItem('myVisits')) || [];
         if (visits.length === 0) return alert("No history to share.");
-        
         const captureArea = document.getElementById('captureArea');
-        let historyHtml = `
-            <div style="text-align:center; padding-bottom:15px; border-bottom:2px solid #27ae60;">
-                <h2 style="color:#27ae60; margin:0;">आरोग्य संचय</h2>
-                <p style="color:#2980b9; font-weight:bold; margin:5px 0;">FULL MEDICAL HISTORY REPORT</p>
-            </div>`;
-
+        let historyHtml = `<div style="text-align:center; padding-bottom:15px; border-bottom:2px solid #27ae60;"><h2 style="color:#27ae60; margin:0;">आरोग्य संचय</h2><p style="color:#2980b9; font-weight:bold; margin:5px 0;">FULL MEDICAL HISTORY REPORT</p></div>`;
         visits.forEach(v => {
-            historyHtml += `
-            <div style="background:white; border-radius:10px; padding:15px; margin-top:10px; border-left:5px solid #f39c12; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                <div style="display:flex; justify-content:space-between; font-size:12px;">
-                    <strong>${v.date}</strong>
-                    <span style="background:#ebf8ff; color:#2b6cb0; padding:2px 6px; border-radius:4px;">${v.category}</span>
-                </div>
-                <h3 style="margin:8px 0; color:#2c3e50;">${v.illness}</h3>
-                <p style="margin:2px 0; font-size:13px;"><strong>Doctor:</strong> ${v.doctor}</p>
-                <p style="margin:2px 0; font-size:13px; color:#27ae60;"><strong>Medication:</strong> ${v.medicine}</p>
-                <p style="margin:5px 0 0 0; font-size:12px; color:#718096; font-style:italic;">Note: ${v.notes}</p>
-            </div>`;
+            historyHtml += `<div style="background:white; border-radius:10px; padding:15px; margin-top:10px; border-left:5px solid #f39c12; box-shadow:0 2px 4px rgba(0,0,0,0.1);"><div style="display:flex; justify-content:space-between; font-size:12px;"><strong>${v.date}</strong><span style="background:#ebf8ff; color:#2b6cb0; padding:2px 6px; border-radius:4px;">${v.category}</span></div><h3 style="margin:8px 0; color:#2c3e50;">${v.illness}</h3><p style="margin:2px 0; font-size:13px;"><strong>Doctor:</strong> ${v.doctor}</p><p style="margin:2px 0; font-size:13px; color:#27ae60;"><strong>Medication:</strong> ${v.medicine}</p><p style="margin:5px 0 0 0; font-size:12px; color:#718096; font-style:italic;">Note: ${v.notes}</p></div>`;
         });
-
         captureArea.innerHTML = historyHtml;
-
         try {
             const canvas = await html2canvas(captureArea, { scale: 2, backgroundColor: "#f0f4f8" });
             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
             const file = new File([blob], `FullHistory_${new Date().toLocaleDateString()}.jpg`, { type: 'image/jpeg' });
-            
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({ files: [file], title: 'Full Medical History' });
             } else {
@@ -397,11 +361,7 @@
         const blood = document.getElementById('bloodFile');
         const insurance = document.getElementById('insuranceFile');
         const other = document.getElementById('otherReportsFile');
-
-        // Check if at least one file is selected
-        if (!blood.files[0] && !insurance.files[0] && !other.files[0]) {
-            return alert("Please select at least one file to upload.");
-        }
+        if (!blood.files[0] && !insurance.files[0] && !other.files[0]) return alert("Please select at least one file.");
 
         const processFile = (fileInput, type) => {
             return new Promise((resolve) => {
@@ -412,105 +372,71 @@
                         const img = new Image();
                         img.src = e.target.result;
                         img.onload = () => {
-                            // Create a canvas to resize/compress the image
                             const canvas = document.createElement('canvas');
-                            let width = img.width;
-                            let height = img.height;
-
-                            // Max dimension 1200px to save space
-                            const max_size = 1200;
-                            if (width > height) {
-                                if (width > max_size) {
-                                    height *= max_size / width;
-                                    width = max_size;
-                                }
-                            } else {
-                                if (height > max_size) {
-                                    width *= max_size / height;
-                                    height = max_size;
-                                }
-                            }
-                            canvas.width = width;
-                            canvas.height = height;
+                            let width = img.width, height = img.height, max_size = 1200;
+                            if (width > height) { if (width > max_size) { height *= max_size / width; width = max_size; } }
+                            else { if (height > max_size) { width *= max_size / height; height = max_size; } }
+                            canvas.width = width; canvas.height = height;
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
-
-                            // Compress to 60% quality JPEG (drastically smaller size)
                             const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
-
                             let reports = JSON.parse(localStorage.getItem('myDocs')) || [];
-                            reports.push({ 
-                                id: Date.now() + "_" + Math.random(),
-                                type: type, 
-                                name: file.name, 
-                                date: new Date().toLocaleDateString(),
-                                data: compressedDataUrl 
-                            });
-                            
+                            reports.push({ id: Date.now() + "_" + Math.random(), type: type, name: file.name, date: new Date().toLocaleDateString(), data: compressedDataUrl });
                             try {
                                 localStorage.setItem('myDocs', JSON.stringify(reports));
-                                fileInput.value = ""; 
-                                resolve();
+                                fileInput.value = ""; resolve();
                             } catch (error) {
-                                alert("Vault is full! Please delete old reports to add new ones.");
-                                resolve();
+                                alert("Vault is full! Please delete old reports."); resolve();
                             }
                         };
                     };
                     reader.readAsDataURL(file);
-                } else {
-                    resolve();
-                }
+                } else resolve();
             });
         };
-        // Process all uploads and then refresh the UI
-        Promise.all([
-            processFile(blood, "Blood Report"),
-            processFile(insurance, "Insurance"),
-            processFile(other, "Other Report")
-        ]).then(() => {
-            alert("Documents uploaded and saved to vault successfully!");
-            renderReportList(); // Refresh the visible list
-        }).catch(err => {
-            console.error("Upload Error:", err);
-            alert("An error occurred while saving documents.");
+
+        Promise.all([processFile(blood, "Blood Report"), processFile(insurance, "Insurance"), processFile(other, "Other Report")])
+        .then(() => {
+            alert("Uploaded successfully!");
+            renderReportList();
         });
     }
+
+    function renderReportList() {
+        const docs = JSON.parse(localStorage.getItem('myDocs')) || [];
+        const container = document.getElementById('reportList');
+        if (docs.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#7f8c8d; font-size:12px;">No documents stored.</p>';
+            return;
+        }
+        container.innerHTML = docs.map((d, i) => `
+            <div class="report-item">
+                <div><strong style="color:var(--primary-blue)">${d.type}</strong><br><small>${d.name} (${d.date})</small></div>
+                <div class="report-actions">
+                    <button class="control-btn view-btn" onclick="viewFile('${d.data}')">View 👁️</button>
+                    <button class="control-btn del-btn" onclick="deleteDoc(${i})">🗑️</button>
+                </div>
+            </div>`).join('');
+    }
+
     function viewFile(dataUrl) {
         try {
-            // Split the base64 string to get the content type and the data
             const parts = dataUrl.split(';');
             const contentType = parts[0].split(':')[1];
-            const raw = window.atob(parts[1].split(',')[1]);
-            const rawLength = raw.length;
-            const uInt8Array = new Uint8Array(rawLength);
-
-            for (let i = 0; i < rawLength; ++i) {
-                uInt8Array[i] = raw.charCodeAt(i);
-            }
-
-            // Create a Blob from the base64 data
-            const blob = new Blob([uInt8Array], { type: contentType });
+            const byteString = atob(parts[1].split(',')[1]);
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+            const blob = new Blob([ab], { type: contentType });
             const blobUrl = URL.createObjectURL(blob);
-
-            // Create a temporary link to open the file
-            const tempLink = document.createElement('a');
-            tempLink.href = blobUrl;
-            tempLink.target = '_blank';
-            
-            // For mobile compatibility, we use a direct click approach
-            document.body.appendChild(tempLink);
-            tempLink.click();
-            document.body.removeChild(tempLink);
-
-            // Clean up the URL object after a short delay
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+            window.open(blobUrl, '_blank');
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
         } catch (e) {
-            // Fallback for simple images if Blob conversion fails
             const win = window.open();
             win.document.write('<img src="' + dataUrl + '" style="width:100%">');
         }
     }
+
     function deleteDoc(index) {
         if(confirm("Delete this document?")) {
             let docs = JSON.parse(localStorage.getItem('myDocs'));
@@ -528,9 +454,7 @@
                 <div style="display:flex; justify-content:space-between;"><span style="font-weight:bold;">${v.date}</span><span class="tag">${v.category}</span></div>
                 <h4 style="margin:5px 0;">${v.illness}</h4>
                 <p style="margin:0; font-size:13px;"><strong>Dr:</strong> ${v.doctor}</p>
-                <div style="margin:5px 0 0 0; font-size:13px; color:var(--primary-green);">
-                    <strong>Meds:</strong> ${v.medicine}
-                </div>
+                <div style="margin:5px 0 0 0; font-size:13px; color:var(--primary-green);"><strong>Meds:</strong> ${v.medicine}</div>
                 <div class="card-controls">
                     <button class="control-btn edit-btn" onclick="editVisit(${index})">Edit ✏️</button>
                     <button class="control-btn del-btn" onclick="deleteVisit(${index})">Delete 🗑️</button>
@@ -546,16 +470,10 @@
         document.getElementById('drName').value = v.doctor;
         document.getElementById('categorySelect').value = v.metaCat;
         handleCategoryChange();
-        
-        // Re-populate Medications
         const container = document.getElementById('medicationContainer');
         container.innerHTML = "";
-        if(v.medDetails && v.medDetails.length > 0) {
-            v.medDetails.forEach(m => addMedicationRow(m));
-        } else {
-            addMedicationRow();
-        }
-
+        if(v.medDetails && v.medDetails.length > 0) v.medDetails.forEach(m => addMedicationRow(m));
+        else addMedicationRow();
         setTimeout(() => {
             document.getElementById('illnessSelect').value = v.metaIll;
             handleIllnessChange();
@@ -568,7 +486,7 @@
     }
 
     function deleteVisit(index) {
-        if(confirm("Delete this record permanently?")) {
+        if(confirm("Delete this record?")) {
             let visits = JSON.parse(localStorage.getItem('myVisits')) || [];
             visits.splice(index, 1);
             localStorage.setItem('myVisits', JSON.stringify(visits));
@@ -594,23 +512,19 @@
             card.style.display = card.innerText.toLowerCase().includes(query) ? "block" : "none";
         });
     }
- // Revised Auto-hyphenation for dosage (e.g., 1-0-1) using Event Delegation
-document.addEventListener('input', function (e) {
-    // Check if the input being typed into is a frequency/dosage field
-    if (e.target && e.target.classList.contains('med-freq')) {
-        let value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-        if (value.length > 3) value = value.slice(0, 3); // Limit to 3 digits
-        
-        let formattedValue = "";
-        for (let i = 0; i < value.length; i++) {
-            formattedValue += value[i];
-            // Add a dash after the first and second digit, but not at the end
-            if ((i === 0 || i === 1) && i !== value.length - 1) {
-                formattedValue += "-";
+
+    document.addEventListener('input', function (e) {
+        if (e.target && e.target.classList.contains('med-freq')) {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 3) value = value.slice(0, 3);
+            let formattedValue = "";
+            for (let i = 0; i < value.length; i++) {
+                formattedValue += value[i];
+                if ((i === 0 || i === 1) && i !== value.length - 1) formattedValue += "-";
             }
+            e.target.value = formattedValue;
         }
-        e.target.value = formattedValue;
-    }
-});</script>
+    });
+</script>
 </body>
 </html>
