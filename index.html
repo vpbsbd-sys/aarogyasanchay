@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Health is Wealth: Medical Vault</title>
+    <title>Arogya Sanchay: Medical Record Vault</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -11,119 +11,131 @@
             --primary-blue: #2980b9;
             --accent-orange: #f39c12;
             --danger-red: #e74c3c;
-            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
             --text-main: #2c3e50;
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-light);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
             color: var(--text-main);
-            margin: 0; padding: 0;
+            margin: 0; padding: 10px;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- Professional Header & Enlarged Logo --- */
-        .app-header {
-            width: 100%;
-            background: white;
-            padding: 30px 0;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            margin-bottom: 20px;
-        }
+        .container { width: 100%; max-width: 480px; margin-bottom: 50px; }
+        
+        .logo-container { text-align: center; padding: 15px 0; }
+        .app-logo { width: 120px; height: auto; margin-bottom: 10px; border-radius: 15px; }
+        .logo-container h2 { color: var(--primary-green); margin: 0; font-size: 24px; }
+        .logo-container p { margin: 5px 0; font-weight: bold; color: var(--primary-blue); font-size: 14px; letter-spacing: 1px; }
 
-        .app-logo {
-            width: 220px; /* Increased size for clarity */
-            height: auto;
-            border-radius: 24px;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
-            margin-bottom: 12px;
-        }
-
-        .app-header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--primary-green);
-            letter-spacing: -0.5px;
-            text-transform: uppercase;
-        }
-
-        .app-header p {
-            margin: 4px 0 0;
-            font-size: 12px;
-            color: #94a3b8;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-
-        /* --- Layout Containers --- */
-        .container { width: 92%; max-width: 460px; padding-bottom: 50px; }
-
-        .tabs { display: flex; background: #e2e8f0; padding: 4px; border-radius: 14px; margin-bottom: 25px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-weight: 700; cursor: pointer; color: #64748b; border-radius: 10px; transition: 0.2s; }
-        .tab-btn.active { background: white; color: var(--primary-green); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .tabs { display: flex; width: 100%; margin-bottom: 15px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-weight: bold; cursor: pointer; color: #7f8c8d; }
+        .tab-btn.active { background: var(--primary-green); color: white; }
 
         .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .section.active { display: block; }
 
         .card {
-            background: white;
-            padding: 24px;
-            border-radius: 24px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            border-top: 5px solid var(--primary-green);
         }
 
-        label { display: block; font-weight: 700; font-size: 11px; margin-bottom: 6px; color: var(--primary-blue); text-transform: uppercase; margin-left: 4px; }
+        label {
+            display: block; font-weight: 700; font-size: 11px;
+            margin-bottom: 5px; color: var(--primary-blue); text-transform: uppercase;
+        }
 
-        .input-row { display: flex; gap: 8px; margin-bottom: 16px; }
-        input, select, textarea { width: 100%; padding: 14px; border: 1.5px solid #f1f5f9; border-radius: 16px; font-size: 16px; background: #f1f5f9; box-sizing: border-box; outline: none; transition: 0.2s; }
-        input:focus { border-color: var(--primary-blue); background: white; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 2px solid #edf2f7;
+            border-radius: 12px; font-size: 14px; background: #f8fafc; box-sizing: border-box;
+        }
 
-        .mic-btn { background: #eff6ff; border: none; border-radius: 14px; cursor: pointer; padding: 0 12px; font-size: 20px; min-width: 52px; color: var(--primary-blue); }
+        /* Medication Specific UI */
+        .med-entry { 
+            background: #f1f5f9; 
+            padding: 10px; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            border: 1px solid #e2e8f0;
+        }
+        .med-grid { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr 1fr; 
+            gap: 5px; 
+            margin-top: 5px;
+        }
+        .add-med-btn { 
+            background: #edf2f7; 
+            color: var(--primary-blue); 
+            border: 2px dashed var(--primary-blue); 
+            width: 100%; 
+            padding: 8px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .remove-med { color: var(--danger-red); font-weight: bold; cursor: pointer; float: right; }
 
-        .reminder-box { display: flex; align-items: center; justify-content: space-between; background: #fff8eb; padding: 14px; border-radius: 16px; margin-bottom: 16px; border: 1px solid #ffe4b3; }
+        .mic-btn {
+            background: #f8fafc; border: 2px solid #edf2f7; border-radius: 12px;
+            cursor: pointer; padding: 0 12px; font-size: 18px; min-width: 50px;
+        }
 
-        /* --- Rearranged Action Buttons --- */
-        .action-group { display: flex; flex-direction: column; gap: 12px; }
-        .save-btn-full { width: 100%; background: var(--primary-green); color: white; border: none; padding: 18px; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; transition: transform 0.1s; }
-        .save-btn-full:active { transform: scale(0.98); }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        button.action { border: none; padding: 15px; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .save-btn { background: var(--primary-green); color: white; grid-column: span 2; }
+        .share-btn { background: #6c5ce7; color: white; }
+        .view-reports-btn { background: var(--primary-blue); color: white; }
+        .clear-btn { background: #cbd5e0; color: #4a5568; }
 
-        .bottom-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-secondary { border: none; padding: 14px; border-radius: 16px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .clear-btn { background: #f1f5f9; color: #64748b; }
-        .share-btn { background: var(--primary-blue); color: white; }
+        .search-box {
+            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--primary-blue);
+            margin: 10px 0; font-size: 14px; background: white;
+        }
 
-        .export-link { display: block; text-align: center; margin-top: 15px; color: #6c5ce7; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; }
+        .visit-card {
+            background: white; border-radius: 15px; padding: 20px;
+            margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--accent-orange);
+            width: 90%; margin: 15px auto; position: relative;
+        }
 
-        /* --- History List --- */
-        .visit-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border-left: 6px solid var(--accent-orange); position: relative; }
-        .history-meta { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .tag { font-size: 10px; background: #eff6ff; color: #3b82f6; padding: 4px 10px; border-radius: 20px; font-weight: 800; text-transform: uppercase; }
-        .card-controls { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; border-top: 1px solid #f8fafc; padding-top: 10px; }
-        .control-btn { border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; cursor: pointer; font-weight: 700; }
-        .edit-btn { background: #eff6ff; color: var(--primary-blue); }
-        .del-btn { background: #fff1f2; color: var(--danger-red); }
+        .card-controls {
+            display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid #f7fafc; padding-top: 10px;
+        }
 
-        .search-box { width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #e2e8f0; margin: 15px 0; font-size: 15px; background: white; box-sizing: border-box; }
-        .report-item { background: #f8fafc; padding: 12px; border-radius: 16px; margin-bottom: 10px; border: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-        #captureArea { position: absolute; left: -9999px; width: 400px; }
+        .control-btn { border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .edit-btn { background: #ebf8ff; color: var(--primary-blue); }
+        .del-btn { background: #fff5f5; color: var(--danger-red); }
+        .view-btn { background: #e6fffa; color: #2c7a7b; }
+        .tag { font-size: 10px; background: #ebf8ff; color: #2b6cb0; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; }
+        
+        .report-item { background: #f8fafc; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .report-actions { display: flex; gap: 5px; }
+        
+        #captureArea { position: absolute; left: -9999px; width: 450px; background: #f0f4f8; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div class="app-header">
-    <img src="image_589dda.png" alt="Health is Wealth" class="app-logo">
-    <h1>Health is Wealth</h1>
-    <p>Secure Medical Vault</p>
-</div>
-
 <div class="container">
+    <div class="logo-container">
+        <img src="image_589dda.png" alt="Health is Wealth Logo" class="app-logo">
+        <h2>आरोग्य संचय</h2>
+        <p>MEDICAL RECORD VAULT</p>
+    </div>
+
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('visitTab')">Visit Entry</button>
-        <button class="tab-btn" onclick="switchTab('reportTab')">Reports Tab</button>
+        <button id="visitTabBtn" class="tab-btn active" onclick="switchTab('visitTab')">Visit Entry</button>
+        <button id="reportTabBtn" class="tab-btn" onclick="switchTab('reportTab')">Reports Vault</button>
     </div>
 
     <div id="visitTab" class="section active">
@@ -131,76 +143,72 @@
             <input type="hidden" id="editIndex" value="-1">
             
             <label>Visit Date</label>
-            <input type="date" id="visitDate" style="margin-bottom:16px;">
+            <input type="date" id="visitDate" style="margin-bottom:12px;">
 
             <label>Doctor's Name</label>
             <div class="input-row">
-                <input type="text" id="drName" placeholder="Name of Doctor">
+                <input type="text" id="drName" placeholder="Attending Doctor">
                 <button class="mic-btn" onclick="runSpeech('drName')">🎤</button>
             </div>
 
             <label>Category</label>
-            <select id="categorySelect" onchange="handleCategoryChange()" style="margin-bottom:16px;"></select>
+            <select id="categorySelect" onchange="handleCategoryChange()" style="margin-bottom:12px;"></select>
             <div class="input-row" id="rowOtherCat" style="display:none;">
-                <input type="text" id="otherCategoryInput" placeholder="Enter Category">
+                <input type="text" id="otherCategoryInput" placeholder="Type Custom Category">
                 <button class="mic-btn" onclick="runSpeech('otherCategoryInput')">🎤</button>
             </div>
 
-            <label>Illness / Health Issue</label>
-            <select id="illnessSelect" onchange="handleIllnessChange()" style="margin-bottom:16px;"></select>
+            <label>Problem / Illness</label>
+            <select id="illnessSelect" onchange="handleIllnessChange()" style="margin-bottom:12px;"></select>
             <div class="input-row" id="rowOtherIll" style="display:none;">
-                <input type="text" id="otherIllnessInput" placeholder="Describe Issue">
+                <input type="text" id="otherIllnessInput" placeholder="Type Custom Problem">
                 <button class="mic-btn" onclick="runSpeech('otherIllnessInput')">🎤</button>
             </div>
 
-            <label>Medication Prescribed</label>
-            <div class="input-row">
-                <input type="text" id="medicine" placeholder="e.g. Paracetamol 500mg">
-                <button class="mic-btn" onclick="runSpeech('medicine')">🎤</button>
-            </div>
+            <label>Medication List</label>
+            <div id="medicationContainer">
+                </div>
+            <button class="add-med-btn" onclick="addMedicationRow()">+ Add Medication</button>
 
-            <div class="reminder-box">
-                <span style="font-size: 13px; font-weight: 800; color: #d97706;">🔔 Set Dose Reminder?</span>
-                <input type="time" id="reminderTime" style="width: auto; padding: 6px; background: white; border: 1px solid #fcd34d; border-radius: 8px;">
-            </div>
-
-            <label>Advice & Notes</label>
+            <label>Notes</label>
             <div class="input-row">
-                <textarea id="notes" rows="2" placeholder="Doctor's instructions..."></textarea>
+                <textarea id="notes" rows="2" placeholder="Doctor's Advice or Notes..."></textarea>
                 <button class="mic-btn" onclick="runSpeech('notes')">🎤</button>
             </div>
 
-            <div class="action-group">
-                <button class="save-btn-full" id="btnMain" onclick="saveData()">Save to Vault ✅</button>
-                <div class="bottom-btns">
-                    <button class="btn-secondary clear-btn" onclick="clearForm()">Clear 🗑️</button>
-                    <button class="btn-secondary share-btn" onclick="fetchAndShare()">Share Card 📤</button>
-                </div>
+            <div class="action-btns">
+                <button class="action save-btn" id="btnMain" onclick="saveData()">Save Record ✅</button>
+                <button class="action clear-btn" onclick="clearForm()">Clear 🗑️</button>
+                <button class="action view-reports-btn" onclick="switchTab('reportTab')">View Reports 📂</button>
+                <button class="action share-btn" style="grid-column: span 2;" onclick="fetchAndShare()">Share Full History Card 📤</button>
             </div>
-            <span class="export-link" onclick="exportToExcel()">📊 Export Full History to Excel</span>
         </div>
     </div>
 
     <div id="reportTab" class="section">
         <div class="card">
-            <h3>Document Vault</h3>
+            <h3>Upload Documents</h3>
+            
             <label>Blood Reports</label>
             <input type="file" id="bloodFile" accept="image/*,.pdf" style="margin-bottom:15px;">
-            <label>Insurance Docs</label>
+            
+            <label>Insurance Documents</label>
             <input type="file" id="insuranceFile" accept="image/*,.pdf" style="margin-bottom:15px;">
-            <label>Other Reports</label>
-            <input type="file" id="otherReportsFile" accept="image/*,.pdf" style="margin-bottom:20px;">
-            <button class="save-btn-full" onclick="saveFiles()">Upload Documents 📁</button>
+            
+            <label>Other Reports / Prescription</label>
+            <input type="file" id="otherReportsFile" accept="image/*,.pdf" style="margin-bottom:15px;">
+            
+            <button class="action save-btn" style="width:100%" onclick="saveFiles()">Upload to Vault 📁</button>
         </div>
 
         <div id="fileHistory" class="card">
-            <h3>Stored Records</h3>
+            <h3>Stored Documents</h3>
             <div id="reportList"></div>
         </div>
     </div>
 
-    <h3 style="padding-left:10px; margin-bottom: 5px;">Visit History</h3>
-    <input type="text" id="searchBar" class="search-box" placeholder="🔍 Search records..." onkeyup="filterHistory()">
+    <h3 style="padding-left:10px;">Visit History</h3>
+    <input type="text" id="searchBar" class="search-box" placeholder="🔍 Search History..." onkeyup="filterHistory()">
     
     <div id="visitHistory"></div>
 </div>
@@ -208,21 +216,20 @@
 <div id="captureArea"></div>
 
 <script>
-    // Logic remains identical to your working version to ensure "nothing is deleted"
     const medicalData = {
-        "General / Infection": ["Fever", "Viral Fever", "Bacterial Infection", "Cold", "Cough", "Sore Throat", "Flu", "Body Ache"],
-        "Pain & Injury": ["Headache", "Migraine", "Back Pain", "Neck Pain", "Knee Pain", "Muscle Pain", "Injury / Trauma"],
-        "Heart / BP": ["High BP", "Low BP", "Chest Pain", "Palpitations"],
-        "Digestive System": ["Stomach Pain", "Acidity", "Indigestion", "Gas", "Diarrhea", "Vomiting"],
-        "Diabetes / Metabolic": ["Diabetes Check", "High Sugar", "Low Sugar", "Thyroid Disorder"],
-        "Respiratory": ["Asthma", "Breathing Difficulty", "Bronchitis"],
-        "Neurological": ["Anxiety", "Stress", "Depression", "Dizziness", "Vertigo"],
-        "Bone / Ortho": ["Arthritis", "Osteoporosis", "Fracture", "Slip Disc"],
-        "Skin / Hair": ["Skin Allergy", "Rashes", "Itching", "Acne", "Hair Fall"],
-        "Eye / ENT": ["Eye Infection", "Eye Pain", "Ear Pain", "Hearing Issue", "Sinusitis"],
-        "Urinary / Kidney": ["UTI", "Burning Urination", "Kidney Stone"],
-        "Men / Women": ["Menstrual Pain", "Irregular Periods", "Pregnancy Check-up"],
-        "Routine": ["General Check-up", "Blood Test Review", "Vaccination"],
+        "General / Infection": ["Fever", "Viral Fever", "Bacterial Infection", "Cold", "Cough", "Cold & Cough", "Sore Throat", "Flu (Influenza)", "COVID-like symptoms", "Body Ache", "Fatigue / Weakness"],
+        "Pain & Injury": ["Headache", "Migraine", "Back Pain", "Neck Pain", "Shoulder Pain", "Knee Pain", "Joint Pain", "Muscle Pain", "Injury / Trauma", "Sprain / Strain"],
+        "Heart / BP": ["High Blood Pressure (Hypertension)", "Low Blood Pressure", "Chest Pain", "Palpitations", "Heart Check-up (Routine)"],
+        "Digestive System": ["Stomach Pain", "Acidity / GERD", "Indigestion", "Gas / Bloating", "Diarrhea", "Constipation", "Vomiting", "Food Poisoning", "Liver Problem"],
+        "Diabetes / Metabolic": ["Diabetes – Routine Check", "High Sugar Level", "Low Sugar Level", "Thyroid Disorder", "Cholesterol Problem", "Obesity / Weight Issue"],
+        "Respiratory": ["Asthma", "Breathing Difficulty", "Bronchitis", "Pneumonia"],
+        "Neurological": ["Anxiety", "Stress", "Depression", "Sleep Disorder (Insomnia)", "Dizziness", "Vertigo", "Memory Issues"],
+        "Bone / Ortho": ["Arthritis", "Osteoporosis", "Fracture", "Slip Disc", "Sciatica", "Bone Pain"],
+        "Skin / Hair": ["Skin Allergy", "Rashes", "Itching", "Fungal Infection", "Acne", "Hair Fall", "Dandruff", "Psoriasis", "Eczema"],
+        "Eye / ENT": ["Eye Infection", "Eye Pain", "Vision Problem", "Ear Pain", "Ear Infection", "Hearing Issue", "Sinusitis", "Tonsillitis"],
+        "Urinary / Kidney": ["Urinary Tract Infection (UTI)", "Burning Urination", "Kidney Stone", "Frequent Urination", "Prostate Issue"],
+        "Men / Women": ["Menstrual Pain", "Irregular Periods", "PCOD / PCOS", "Pregnancy Check-up", "Menopause Issues", "Erectile Dysfunction", "Hormonal Issue"],
+        "Routine": ["General Check-up", "Blood Test Review", "X-ray / Scan Review", "Vaccination", "Medical Certificate", "Fitness Check"],
         "Other": ["Other"]
     };
 
@@ -231,15 +238,38 @@
         const catSelect = document.getElementById('categorySelect');
         catSelect.add(new Option("-- Select Category --", ""));
         Object.keys(medicalData).forEach(cat => catSelect.add(new Option(cat, cat)));
+        addMedicationRow(); // Add one row by default
         fetchHistory();
         renderReportList();
     };
+
+    function addMedicationRow(data = null) {
+        const container = document.getElementById('medicationContainer');
+        const div = document.createElement('div');
+        div.className = 'med-entry';
+        div.innerHTML = `
+            <span class="remove-med" onclick="this.parentElement.remove()">✕</span>
+            <input type="text" class="med-name" placeholder="Medicine Name" value="${data ? data.name : ''}">
+            <div class="med-grid">
+                <input type="text" class="med-dose" placeholder="Dose (500, 10)" value="${data ? data.dose : ''}">
+                <select class="med-unit">
+                    <option value="mg" ${data && data.unit === 'mg' ? 'selected' : ''}>mg</option>
+                    <option value="ml" ${data && data.unit === 'ml' ? 'selected' : ''}>ml</option>
+                    <option value="Tab" ${data && data.unit === 'Tab' ? 'selected' : ''}>Tab</option>
+                    <option value="Cap" ${data && data.unit === 'Cap' ? 'selected' : ''}>Cap</option>
+                </select>
+                <input type="text" class="med-freq" placeholder="1-0-1" value="${data ? data.freq : ''}">
+            </div>
+        `;
+        container.appendChild(div);
+    }
 
     function switchTab(tabId) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        if(tabId === 'visitTab') document.getElementById('visitTabBtn').classList.add('active');
+        if(tabId === 'reportTab') document.getElementById('reportTabBtn').classList.add('active');
     }
 
     function handleCategoryChange() {
@@ -265,7 +295,7 @@
 
     function runSpeech(id) {
         const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-        if (!SpeechRecognition) return alert("Speech recognition not supported");
+        if (!SpeechRecognition) return alert("Speech recognition not supported.");
         const recognition = new SpeechRecognition();
         recognition.onresult = (e) => { document.getElementById(id).value = e.results[0][0].transcript; };
         recognition.start();
@@ -277,19 +307,38 @@
         let cat = document.getElementById('categorySelect').value;
         let originalCat = cat;
         if(cat === "Other") cat = document.getElementById('otherCategoryInput').value;
+        
         let ill = document.getElementById('illnessSelect').value;
         let originalIll = ill;
         if(ill === "Other") ill = document.getElementById('otherIllnessInput').value;
-        const med = document.getElementById('medicine').value;
+        
+        // Handle Multi-Medications
+        const medRows = document.querySelectorAll('.med-entry');
+        let medsArray = [];
+        let summaryString = "";
+
+        medRows.forEach(row => {
+            const name = row.querySelector('.med-name').value;
+            const dose = row.querySelector('.med-dose').value;
+            const unit = row.querySelector('.med-unit').value;
+            const freq = row.querySelector('.med-freq').value;
+            if(name) {
+                medsArray.push({name, dose, unit, freq});
+                summaryString += `${name} (${dose}${unit}) [${freq}], `;
+            }
+        });
+
         const note = document.getElementById('notes').value;
-        const remTime = document.getElementById('reminderTime').value;
         const editIdx = parseInt(document.getElementById('editIndex').value);
 
-        if (!ill || !med) return alert("Please fill Illness and Medication.");
+        if (!ill || medsArray.length === 0) return alert("Please fill at least Illness and one Medication.");
 
         const visit = { 
-            date: vDate, doctor: dr, category: cat, illness: ill, medicine: med, notes: note,
-            metaCat: originalCat, metaIll: originalIll, reminder: remTime
+            date: vDate, doctor: dr, category: cat, illness: ill, 
+            medicine: summaryString.replace(/, $/, ""), // string for history view
+            medDetails: medsArray, // raw data for editing
+            notes: note,
+            metaCat: originalCat, metaIll: originalIll
         };
 
         let visits = JSON.parse(localStorage.getItem('myVisits')) || [];
@@ -304,28 +353,40 @@
     async function fetchAndShare() {
         const visits = JSON.parse(localStorage.getItem('myVisits')) || [];
         if (visits.length === 0) return alert("No history to share.");
-        const v = visits[visits.length - 1]; 
-
+        
         const captureArea = document.getElementById('captureArea');
-        captureArea.innerHTML = `<div class="visit-card" id="temp-card" style="border-left: 10px solid #27ae60; width: 350px;">
-            <div class="history-meta"><span style="font-weight:bold;">${v.date}</span><span class="tag">${v.category}</span></div>
-            <h2 style="margin:10px 0; color:#2c3e50;">${v.illness}</h2>
-            <p><strong>Dr:</strong> ${v.doctor}</p>
-            <p style="color:#27ae60;"><strong>Meds:</strong> ${v.medicine}</p>
-            ${v.reminder ? `<p style="color:#e67e22;"><strong>🔔 Reminder:</strong> ${v.reminder}</p>` : ''}
-            <p style="font-size:12px; color:#64748b; border-top:1px solid #eee; margin-top:10px; padding-top:10px;"><em>Notes: ${v.notes}</em></p>
-        </div>`;
+        let historyHtml = `
+            <div style="text-align:center; padding-bottom:15px; border-bottom:2px solid #27ae60;">
+                <h2 style="color:#27ae60; margin:0;">आरोग्य संचय</h2>
+                <p style="color:#2980b9; font-weight:bold; margin:5px 0;">FULL MEDICAL HISTORY REPORT</p>
+            </div>`;
+
+        visits.forEach(v => {
+            historyHtml += `
+            <div style="background:white; border-radius:10px; padding:15px; margin-top:10px; border-left:5px solid #f39c12; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                <div style="display:flex; justify-content:space-between; font-size:12px;">
+                    <strong>${v.date}</strong>
+                    <span style="background:#ebf8ff; color:#2b6cb0; padding:2px 6px; border-radius:4px;">${v.category}</span>
+                </div>
+                <h3 style="margin:8px 0; color:#2c3e50;">${v.illness}</h3>
+                <p style="margin:2px 0; font-size:13px;"><strong>Doctor:</strong> ${v.doctor}</p>
+                <p style="margin:2px 0; font-size:13px; color:#27ae60;"><strong>Medication:</strong> ${v.medicine}</p>
+                <p style="margin:5px 0 0 0; font-size:12px; color:#718096; font-style:italic;">Note: ${v.notes}</p>
+            </div>`;
+        });
+
+        captureArea.innerHTML = historyHtml;
 
         try {
-            const canvas = await html2canvas(document.querySelector("#temp-card"), { scale: 2 });
+            const canvas = await html2canvas(captureArea, { scale: 2, backgroundColor: "#f0f4f8" });
             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
-            const file = new File([blob], `HealthReport_${v.date}.jpg`, { type: 'image/jpeg' });
+            const file = new File([blob], `FullHistory_${new Date().toLocaleDateString()}.jpg`, { type: 'image/jpeg' });
             
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: 'Medical Visit Report' });
+                await navigator.share({ files: [file], title: 'Full Medical History' });
             } else {
                 const link = document.createElement('a');
-                link.download = `HealthReport_${v.date}.jpg`;
+                link.download = `Full_Medical_History.jpg`;
                 link.href = canvas.toDataURL("image/jpeg");
                 link.click();
             }
@@ -333,56 +394,109 @@
     }
 
     function saveFiles() {
-        const blood = document.getElementById('bloodFile').files[0];
-        const insurance = document.getElementById('insuranceFile').files[0];
-        const other = document.getElementById('otherReportsFile').files[0];
-        if (!blood && !insurance && !other) return alert("Select a file.");
-        let reports = JSON.parse(localStorage.getItem('myDocs')) || [];
-        const addReport = (file, type) => { if (file) reports.push({ type, name: file.name, date: new Date().toLocaleDateString() }); };
-        addReport(blood, "Blood Report");
-        addReport(insurance, "Insurance");
-        addReport(other, "Other Report");
-        localStorage.setItem('myDocs', JSON.stringify(reports));
-        renderReportList();
-        alert("Documents saved.");
-    }
+        const blood = document.getElementById('bloodFile');
+        const insurance = document.getElementById('insuranceFile');
+        const other = document.getElementById('otherReportsFile');
 
-    function renderReportList() {
-        const docs = JSON.parse(localStorage.getItem('myDocs')) || [];
-        document.getElementById('reportList').innerHTML = docs.map((d, i) => `
-            <div class="report-item">
-                <div><strong>${d.type}</strong><br><small>${d.name}</small></div>
-                <button class="control-btn del-btn" onclick="deleteDoc(${i})">🗑️</button>
-            </div>`).join('');
-    }
+        // Check if at least one file is selected
+        if (!blood.files[0] && !insurance.files[0] && !other.files[0]) {
+            return alert("Please select at least one file to upload.");
+        }
 
-    function deleteDoc(i) {
-        let docs = JSON.parse(localStorage.getItem('myDocs'));
-        docs.splice(i, 1);
-        localStorage.setItem('myDocs', JSON.stringify(docs));
-        renderReportList();
-    }
+        const processFile = (fileInput, type) => {
+            return new Promise((resolve) => {
+                if (fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        // Crucial: Always get the LATEST state of localStorage before pushing
+                        let reports = JSON.parse(localStorage.getItem('myDocs')) || [];
+                        reports.push({ 
+                            id: Date.now() + "_" + Math.random(),
+                            type: type, 
+                            name: file.name, 
+                            date: new Date().toLocaleDateString(),
+                            data: e.target.result 
+                        });
+                        localStorage.setItem('myDocs', JSON.stringify(reports));
+                        fileInput.value = ""; // Clear input after success
+                        resolve();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    resolve();
+                }
+            });
+        };
 
-    function exportToExcel() {
-        const data = JSON.parse(localStorage.getItem('myVisits')) || [];
-        let csv = "Date,Category,Illness,Doctor,Medicine,Notes,Reminder\n";
-        data.forEach(v => {
-            csv += `"${v.date}","${v.category}","${v.illness}","${v.doctor}","${v.medicine}","${v.notes}","${v.reminder}"\n`;
+        // Process all uploads and then refresh the UI
+        Promise.all([
+            processFile(blood, "Blood Report"),
+            processFile(insurance, "Insurance"),
+            processFile(other, "Other Report")
+        ]).then(() => {
+            alert("Documents uploaded and saved to vault successfully!");
+            renderReportList(); // Refresh the visible list
+        }).catch(err => {
+            console.error("Upload Error:", err);
+            alert("An error occurred while saving documents.");
         });
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `HealthVault_History.csv`;
-        link.click();
+    }
+    function viewFile(dataUrl) {
+        try {
+            // Split the base64 string to get the content type and the data
+            const parts = dataUrl.split(';');
+            const contentType = parts[0].split(':')[1];
+            const raw = window.atob(parts[1].split(',')[1]);
+            const rawLength = raw.length;
+            const uInt8Array = new Uint8Array(rawLength);
+
+            for (let i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+
+            // Create a Blob from the base64 data
+            const blob = new Blob([uInt8Array], { type: contentType });
+            const blobUrl = URL.createObjectURL(blob);
+
+            // Create a temporary link to open the file
+            const tempLink = document.createElement('a');
+            tempLink.href = blobUrl;
+            tempLink.target = '_blank';
+            
+            // For mobile compatibility, we use a direct click approach
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+
+            // Clean up the URL object after a short delay
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+        } catch (e) {
+            // Fallback for simple images if Blob conversion fails
+            const win = window.open();
+            win.document.write('<img src="' + dataUrl + '" style="width:100%">');
+        }
+    }
+    function deleteDoc(index) {
+        if(confirm("Delete this document?")) {
+            let docs = JSON.parse(localStorage.getItem('myDocs'));
+            docs.splice(index, 1);
+            localStorage.setItem('myDocs', JSON.stringify(docs));
+            renderReportList();
+        }
     }
 
     function fetchHistory() {
         const data = JSON.parse(localStorage.getItem('myVisits')) || [];
-        document.getElementById('visitHistory').innerHTML = data.map((v, index) => `
+        const historyDiv = document.getElementById('visitHistory');
+        historyDiv.innerHTML = data.map((v, index) => `
             <div class="visit-card">
-                <div class="history-meta"><span style="font-weight:bold;">${v.date}</span><span class="tag">${v.category}</span></div>
+                <div style="display:flex; justify-content:space-between;"><span style="font-weight:bold;">${v.date}</span><span class="tag">${v.category}</span></div>
                 <h4 style="margin:5px 0;">${v.illness}</h4>
-                <p style="margin:0; font-size:13px; color:#64748b;"><strong>Dr:</strong> ${v.doctor}</p>
+                <p style="margin:0; font-size:13px;"><strong>Dr:</strong> ${v.doctor}</p>
+                <div style="margin:5px 0 0 0; font-size:13px; color:var(--primary-green);">
+                    <strong>Meds:</strong> ${v.medicine}
+                </div>
                 <div class="card-controls">
                     <button class="control-btn edit-btn" onclick="editVisit(${index})">Edit ✏️</button>
                     <button class="control-btn del-btn" onclick="deleteVisit(${index})">Delete 🗑️</button>
@@ -391,30 +505,39 @@
     }
 
     function editVisit(index) {
-        const v = JSON.parse(localStorage.getItem('myVisits'))[index];
+        const visits = JSON.parse(localStorage.getItem('myVisits')) || [];
+        const v = visits[index];
         document.getElementById('editIndex').value = index;
         document.getElementById('visitDate').value = v.date;
         document.getElementById('drName').value = v.doctor;
         document.getElementById('categorySelect').value = v.metaCat;
         handleCategoryChange();
+        
+        // Re-populate Medications
+        const container = document.getElementById('medicationContainer');
+        container.innerHTML = "";
+        if(v.medDetails && v.medDetails.length > 0) {
+            v.medDetails.forEach(m => addMedicationRow(m));
+        } else {
+            addMedicationRow();
+        }
+
         setTimeout(() => {
             document.getElementById('illnessSelect').value = v.metaIll;
             handleIllnessChange();
             if(v.metaIll === "Other") document.getElementById('otherIllnessInput').value = v.illness;
-            document.getElementById('medicine').value = v.medicine;
             document.getElementById('notes').value = v.notes;
-            document.getElementById('reminderTime').value = v.reminder || "";
-            document.getElementById('btnMain').innerText = "Update Vault Record ✅";
+            document.getElementById('btnMain').innerText = "Update Record ✅";
             switchTab('visitTab');
-            window.scrollTo(0, 0);
+            document.getElementById('mainForm').scrollIntoView();
         }, 100);
     }
 
     function deleteVisit(index) {
-        if(confirm("Delete record?")) {
-            let v = JSON.parse(localStorage.getItem('myVisits'));
-            v.splice(index, 1);
-            localStorage.setItem('myVisits', JSON.stringify(v));
+        if(confirm("Delete this record permanently?")) {
+            let visits = JSON.parse(localStorage.getItem('myVisits')) || [];
+            visits.splice(index, 1);
+            localStorage.setItem('myVisits', JSON.stringify(visits));
             fetchHistory();
         }
     }
@@ -424,18 +547,36 @@
         document.getElementById('drName').value = "";
         document.getElementById('categorySelect').value = "";
         document.getElementById('illnessSelect').innerHTML = "";
-        document.getElementById('medicine').value = "";
+        document.getElementById('medicationContainer').innerHTML = "";
+        addMedicationRow();
         document.getElementById('notes').value = "";
-        document.getElementById('reminderTime').value = "";
-        document.getElementById('btnMain').innerText = "Save to Vault ✅";
+        document.getElementById('btnMain').innerText = "Save Record ✅";
     }
 
     function filterHistory() {
-        const q = document.getElementById('searchBar').value.toLowerCase();
-        Array.from(document.getElementsByClassName('visit-card')).forEach(card => {
-            card.style.display = card.innerText.toLowerCase().includes(q) ? "block" : "none";
+        const query = document.getElementById('searchBar').value.toLowerCase();
+        const cards = document.getElementsByClassName('visit-card');
+        Array.from(cards).forEach(card => {
+            card.style.display = card.innerText.toLowerCase().includes(query) ? "block" : "none";
         });
     }
-</script>
+ // Revised Auto-hyphenation for dosage (e.g., 1-0-1) using Event Delegation
+document.addEventListener('input', function (e) {
+    // Check if the input being typed into is a frequency/dosage field
+    if (e.target && e.target.classList.contains('med-freq')) {
+        let value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+        if (value.length > 3) value = value.slice(0, 3); // Limit to 3 digits
+        
+        let formattedValue = "";
+        for (let i = 0; i < value.length; i++) {
+            formattedValue += value[i];
+            // Add a dash after the first and second digit, but not at the end
+            if ((i === 0 || i === 1) && i !== value.length - 1) {
+                formattedValue += "-";
+            }
+        }
+        e.target.value = formattedValue;
+    }
+});</script>
 </body>
 </html>
